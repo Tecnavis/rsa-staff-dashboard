@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { getFirestore, doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc,  deleteDoc } from 'firebase/firestore';
 
 const ViewMore = () => {
     const { id } = useParams();
-    const navigate =useNavigate();
+    const navigate = useNavigate();
     console.log('id', id);
     const [bookingDetails, setBookingDetails] = useState(null);
     const db = getFirestore();
@@ -12,10 +12,34 @@ const ViewMore = () => {
     const [showPickupDetails, setShowPickupDetails] = useState(false);
     const [showDropoffDetails, setShowDropoffDetails] = useState(false);
     const queryParams = new URLSearchParams(search);
-    const [editData, setEditData] = useState(null);
+    // const [editData, setEditData] = useState(null);
     const [staffName, setStaffName] = useState('Admin');
+    // const [ShowRoom, setShowRoom] = useState('');
 
     console.log('first', bookingDetails);
+    // useEffect(() => {
+    //     if (bookingDetails && bookingDetails.showroom) {
+    //         const fetchShowroomLocation = async () => {
+    //             try {
+    //                 const db = getFirestore();
+    //                 const showroomRef = doc(db, 'showroom', bookingDetails.showroom);
+    //                 const showroomSnap = await getDoc(showroomRef);
+        
+    //                 if (showroomSnap.exists()) {
+    //                     const showroomData = showroomSnap.data();
+    //                     setShowRoom(showroomData.ShowRoom);
+    //                 } else {
+    //                     console.log('Showroom document does not exist');
+    //                 }
+    //             } catch (error) {
+    //                 console.error('Error fetching showroom location:', error);
+    //             }
+    //         };
+        
+    //         fetchShowroomLocation();
+    //     }
+    // }, [bookingDetails]);
+    
     useEffect(() => {
         const fetchBookingDetails = async () => {
             try {
@@ -29,14 +53,14 @@ const ViewMore = () => {
                         ...data,
                         kilometer: data.kilometer || 'No data',
                         kilometerdrop: data.kilometerdrop || 'No data',
-                        photo: data.photo, 
+                        photo: data.photo,
                         photodrop: data.photodrop,
                         rcBookImageURLs: data.rcBookImageURLs || [],
                         vehicleImageURLs: data.vehicleImageURLs || [],
                         vehicleImgURLs: data.vehicleImgURLs || [],
                         fuelBillImageURLs: data.fuelBillImageURLs || [],
                     });
-                      if (data.staffId) {
+                    if (data.staffId) {
                         fetchStaffName(data.staffId);
                     }
                 } else {
@@ -65,29 +89,29 @@ const ViewMore = () => {
         fetchBookingDetails();
     }, [db, id]);
 
-    // const togglePickupDetails = () => {
-    //     setShowPickupDetails(!showPickupDetails);
-    //     setShowDropoffDetails(false);
-    // };
+    const togglePickupDetails = () => {
+        setShowPickupDetails(!showPickupDetails);
+        setShowDropoffDetails(false);
+    };
 
-    // const toggleDropoffDetails = () => {
-    //     setShowDropoffDetails(!showDropoffDetails);
-    //     setShowPickupDetails(false);
-    // };
+    const toggleDropoffDetails = () => {
+        setShowDropoffDetails(!showDropoffDetails);
+        setShowPickupDetails(false);
+    };
 
-    // const handleDeleteBooking = async () => {
-    //     const confirmDelete = window.confirm('Are you sure you want to delete this booking?');
-    //     if (confirmDelete) {
-    //         try {
-    //             await deleteDoc(doc(db, 'bookings', id));
-    //             console.log('Document successfully deleted!');
-    //             navigate('/bookings/newbooking')
-    //         } catch (error) {
-    //             console.error('Error deleting document:', error);
-    //         }
-    //     }
-    // };
-  
+    const handleDeleteBooking = async () => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this booking?');
+        if (confirmDelete) {
+            try {
+                await deleteDoc(doc(db, 'bookings', id));
+                console.log('Document successfully deleted!');
+                navigate('/bookings/newbooking');
+            } catch (error) {
+                console.error('Error deleting document:', error);
+            }
+        }
+    };
+
     if (!bookingDetails) {
         return <div>Loading...</div>;
     }
@@ -117,34 +141,18 @@ const ViewMore = () => {
     };
 
     return (
-        // <div style={containerStyle}>
-        //     <h5 className="font-semibold text-lg dark:text-white-light mb-5">Booking Details </h5>
-        //     <div className="flex mb-5">
-        //         <button onClick={togglePickupDetails} className="mr-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-        //             {showPickupDetails ? 'Close' : 'Show Pickup Details'}
-        //         </button>
-        //         <button onClick={toggleDropoffDetails} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
-        //             {showDropoffDetails ? 'Close' : 'Show Dropoff Details'}
-        //         </button>
-        //     </div>
         <div style={containerStyle}>
-        <h5 className="font-semibold text-lg dark:text-white-light mb-5">Booking Details </h5>
-        {/* <div className="flex mb-5">
-            <button onClick={togglePickupDetails} className="mr-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                {showPickupDetails ? 'Close' : 'Show Pickup Details'}
-            </button>
-            <button onClick={toggleDropoffDetails} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
-                {showDropoffDetails ? 'Close' : 'Show Dropoff Details'}
-            </button>
-        </div> */}
-{/* 
-        <button onClick={handleDeleteBooking} className="btn btn-danger">
-            Delete Booking
-        </button>
-        <button onClick={handleUpdateBooking} className="btn btn-primary">Update</button>
-   */}
+            <h5 className="font-semibold text-lg dark:text-white-light mb-5">Booking Details </h5>
+            <div className="flex mb-5">
+                <button onClick={togglePickupDetails} className="mr-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                    {showPickupDetails ? 'Close' : 'Show Pickup Details'}
+                </button>
+                <button onClick={toggleDropoffDetails} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+                    {showDropoffDetails ? 'Close' : 'Show Dropoff Details'}
+                </button>
+            </div>
 
-            {/* {showPickupDetails && (
+            {showPickupDetails && (
                 <div>
                     {bookingDetails.kilometer && (
                         <div className="my-4">
@@ -225,7 +233,7 @@ const ViewMore = () => {
                         )}
                     </div>
                 </div>
-            )} */}
+            )}
 
             <table style={tableStyle}>
                 <tbody>
@@ -242,18 +250,42 @@ const ViewMore = () => {
                         <td style={thStyle}>{staffName}</td>
                     </tr>
                     <tr>
-                        <td style={thStyle}>Payable Amount :</td>
+                        <td style={thStyle}>Edited person</td>
+                        <td style={thStyle}>{bookingDetails.newStatus} , {bookingDetails.editedTime} </td>
+                    </tr>
+                    <tr>
+                        <td style={thStyle}>Insurance :</td>
+                        <td style={tdStyle}>{bookingDetails.insuranceAmount} </td>
+                    </tr>
+                    <tr>
+                        <td style={thStyle}>Invoice Number:</td>
+                        <td style={tdStyle}>{bookingDetails.invoice} </td>
+                    </tr>
+                    <tr>
+                        <td style={thStyle}>Amount without insurance :</td>
                         <td style={tdStyle}>{bookingDetails.totalSalary} </td>
+                    </tr>
+                    <tr>
+                        <td style={thStyle}>Payable Amount with insurance:</td>
+                        <td style={tdStyle}>{bookingDetails.updatedTotalSalary} </td>
                     </tr>
                     <tr>
                         <td style={thStyle}>Company :</td>
                         <td style={tdStyle}>{bookingDetails.company}</td>
                     </tr>
-                    
+                    <tr>
+                        <td style={thStyle}>TrappedLocation :</td>
+                        <td style={tdStyle}>{bookingDetails.trappedLocation}</td>
+                    </tr>
+                    {/* <tr>
+                        <td style={thStyle}>Showroom :</td>
+                        <td style={tdStyle}>{ShowRoom}</td>
+                    </tr> */}
                     <tr>
                         <td style={thStyle}>Showroom :</td>
-                        <td style={tdStyle}>{bookingDetails.showroom}</td>
+                        <td style={tdStyle}>{bookingDetails.showroomLocation}</td>
                     </tr>
+                    
                     <tr>
                         <td style={thStyle}>File Number :</td>
                         <td style={tdStyle}>{bookingDetails.fileNumber}</td>
@@ -307,7 +339,7 @@ const ViewMore = () => {
                                 : 'Location not selected'}
                         </td>
                     </tr>
-                   
+
                     <tr>
                         <td style={thStyle}>Distance :</td>
                         <td style={tdStyle}>{bookingDetails.distance}</td>
@@ -325,11 +357,10 @@ const ViewMore = () => {
                         <td style={tdStyle}>{bookingDetails.comments}</td>
                     </tr>
                 </tbody>
-                {/* <button onClick={handleDeleteBooking} className="btn btn-danger">
+                <button onClick={handleDeleteBooking} className="btn btn-danger">
                     Delete Booking
-                </button> */}
+                </button>
                 {/* <button onClick={handleUpdateBooking} className="btn btn-primary">Update</button> */}
-
             </table>
         </div>
     );

@@ -1,7 +1,8 @@
 {
   "hosting": {
-    "site": "rsa-dashboard-react",
     "public": "dist",
+    "site": "rsa-staff-dashboard",
+
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -14,5 +15,6 @@
       }
     ],
     "predeploy": ["vite build"]
+
   }
 }
